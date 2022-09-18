@@ -52,7 +52,8 @@ const TABELLARIUS_STATE = {
             timing: 0,
             responded: false,
             responseMessage: '',
-            potential: false
+            potential: false,
+            deleted: false
         }
     ],
 
@@ -304,6 +305,7 @@ const MessageHandler = {
                 alertColour: messageToToggle.alertColour,
                 timing: messageToToggle.timing,
                 discount: messageToToggle.discount,
+                deleted: messageToToggle.deleted,
             })
         }
 
@@ -387,6 +389,22 @@ const MessageHandler = {
             TABELLARIUS_STATE.merch_messages.splice(messageToDelete, 1)
         }
         MessageHandler._postHandler()
+    },
+
+    deleteMessage: function (id) {
+        const messageToDelete = TABELLARIUS_STATE.merch_messages.find(m => m.id === id)
+        if (messageToDelete) {
+            messageToDelete.deleted = true
+        }
+        MessageHandler._postHandler()
+    },
+
+    unDeleteMessage: function (id) {
+        const messageToUnDelete = TABELLARIUS_STATE.merch_messages.find(m => m.id === id)
+        if (messageToUnDelete) {
+            messageToUnDelete.deleted = false
+        }
+        MessageHandler._postHandler()
     }
 }
 
@@ -439,6 +457,8 @@ io.on('connection', s => {
     s.on('updateDiscountShow',    MessageHandler.updateDiscountShow)
     s.on('updateDiscountText',    MessageHandler.updateDiscountText)
     s.on('purgeMessage',          MessageHandler.purgeMessage)
+    s.on('deleteMessage',         MessageHandler.deleteMessage)
+    s.on('unDeleteMessage',       MessageHandler.unDeleteMessage)
 
     s.on('disconnect',            () => onSocketDisconnect(s))
 })
