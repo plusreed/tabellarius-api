@@ -379,6 +379,14 @@ const MessageHandler = {
     updateDiscountText: function (newText) {
         TABELLARIUS_STATE.discountText = newText
         MessageHandler._postHandler()
+    },
+
+    purgeMessage: function (id) {
+        const messageToDelete = TABELLARIUS_STATE.merch_messages.findIndex(m => m.id === id)
+        if (messageToDelete > -1) {
+            TABELLARIUS_STATE.merch_messages.splice(messageToDelete, 1)
+        }
+        MessageHandler._postHandler()
     }
 }
 
@@ -430,6 +438,7 @@ io.on('connection', s => {
     s.on('switchOutro',           MessageHandler.switchOutro)
     s.on('updateDiscountShow',    MessageHandler.updateDiscountShow)
     s.on('updateDiscountText',    MessageHandler.updateDiscountText)
+    s.on('purgeMessage',          MessageHandler.purgeMessage)
 
     s.on('disconnect',            () => onSocketDisconnect(s))
 })
