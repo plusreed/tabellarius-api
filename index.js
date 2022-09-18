@@ -468,7 +468,7 @@ io.on('connection', s => {
     s.on('unDeleteMessage',         MessageHandler.unDeleteMessage)
     s.on('togglePotentialToServer', MessageHandler.togglePotentialToServer)
 
-    s.on('disconnect',            () => onSocketDisconnect(s))
+    s.on('disconnect',              () => onSocketDisconnect(s))
 })
 
 /**
