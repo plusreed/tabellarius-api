@@ -1,7 +1,6 @@
 const express = require('express')
 const http = require('http')
 const { Server } = require('socket.io')
-const fs = require('fs/promises')
 const path = require('path')
 const readline = require('readline')
 
