@@ -51,7 +51,8 @@ const TABELLARIUS_STATE = {
             show: false,
             timing: 0,
             responded: false,
-            responseMessage: ''
+            responseMessage: '',
+            potential: false
         }
     ],
 
@@ -115,7 +116,7 @@ app.post('/merch-message', (req, res) => {
         timing: 0,
         responded: false,
         responseMessage: '',
-        discount: true
+        discount: false
     }
     TABELLARIUS_STATE.merch_messages.push(m)
     MessageHandler._emitTimingUpdate(io)
@@ -363,6 +364,21 @@ const MessageHandler = {
         })
 
         MessageHandler._postHandler()
+    },
+
+    switchOutro: function () {
+        // unimplemented
+        MessageHandler._postHandler()
+    },
+
+    updateDiscountShow: function () {
+        TABELLARIUS_STATE.showDiscount = !TABELLARIUS_STATE.showDiscount
+        MessageHandler._postHandler()
+    },
+
+    updateDiscountText: function (newText) {
+        TABELLARIUS_STATE.discountText = newText
+        MessageHandler._postHandler()
     }
 }
 
@@ -411,6 +427,9 @@ io.on('connection', s => {
     s.on('ascendMessage',         MessageHandler.ascendMessage)
     s.on('unAscendMessage',       MessageHandler.unAscendMessage)
     s.on('demoAlertToServer',     MessageHandler.demoAlertToServer)
+    s.on('switchOutro',           MessageHandler.switchOutro)
+    s.on('updateDiscountShow',    MessageHandler.updateDiscountShow)
+    s.on('updateDiscountText',    MessageHandler.updateDiscountText)
 
     s.on('disconnect',            () => onSocketDisconnect(s))
 })
