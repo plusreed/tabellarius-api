@@ -52,8 +52,7 @@ const TABELLARIUS_STATE = {
             timing: 0,
             responded: false,
             responseMessage: '',
-            potential: false,
-            deleted: false
+            potential: false
         }
     ],
 
@@ -405,6 +404,14 @@ const MessageHandler = {
             messageToUnDelete.deleted = false
         }
         MessageHandler._postHandler()
+    },
+
+    togglePotentialToServer: function (id) {
+        const messageToPotentialize = TABELLARIUS_STATE.merch_messages.find(m => m.id === id)
+        if (messageToPotentialize) {
+            messageToPotentialize.potential = !messageToPotentialize.potential
+        }
+        MessageHandler._postHandler()
     }
 }
 
@@ -441,24 +448,25 @@ io.on('connection', s => {
     // If it is, call onSuccessfulAuthentication.
     ensureAuthenticated(s) && onSuccessfulAuthentication(s)
 
-    s.on('respondToMessage',      MessageHandler.respondToMessage)
-    s.on('updateMarqueeShow',     MessageHandler.updateMarqueeShow)
-    s.on('updateMarqueeText',     MessageHandler.updateMarqueeText)
-    s.on('clearMessages',         MessageHandler.clearMessages)
-    s.on('createSponsor',         MessageHandler.createSponsor)
-    s.on('deleteSponsor',         MessageHandler.deleteSponsor)
-    s.on('displaySponsor',        MessageHandler.displaySponsor)
-    s.on('resumeQueue',           MessageHandler.resumeQueue)
-    s.on('toggleMessageToServer', MessageHandler.toggleMessageToServer)
-    s.on('ascendMessage',         MessageHandler.ascendMessage)
-    s.on('unAscendMessage',       MessageHandler.unAscendMessage)
-    s.on('demoAlertToServer',     MessageHandler.demoAlertToServer)
-    s.on('switchOutro',           MessageHandler.switchOutro)
-    s.on('updateDiscountShow',    MessageHandler.updateDiscountShow)
-    s.on('updateDiscountText',    MessageHandler.updateDiscountText)
-    s.on('purgeMessage',          MessageHandler.purgeMessage)
-    s.on('deleteMessage',         MessageHandler.deleteMessage)
-    s.on('unDeleteMessage',       MessageHandler.unDeleteMessage)
+    s.on('respondToMessage',        MessageHandler.respondToMessage)
+    s.on('updateMarqueeShow',       MessageHandler.updateMarqueeShow)
+    s.on('updateMarqueeText',       MessageHandler.updateMarqueeText)
+    s.on('clearMessages',           MessageHandler.clearMessages)
+    s.on('createSponsor',           MessageHandler.createSponsor)
+    s.on('deleteSponsor',           MessageHandler.deleteSponsor)
+    s.on('displaySponsor',          MessageHandler.displaySponsor)
+    s.on('resumeQueue',             MessageHandler.resumeQueue)
+    s.on('toggleMessageToServer',   MessageHandler.toggleMessageToServer)
+    s.on('ascendMessage',           MessageHandler.ascendMessage)
+    s.on('unAscendMessage',         MessageHandler.unAscendMessage)
+    s.on('demoAlertToServer',       MessageHandler.demoAlertToServer)
+    s.on('switchOutro',             MessageHandler.switchOutro)
+    s.on('updateDiscountShow',      MessageHandler.updateDiscountShow)
+    s.on('updateDiscountText',      MessageHandler.updateDiscountText)
+    s.on('purgeMessage',            MessageHandler.purgeMessage)
+    s.on('deleteMessage',           MessageHandler.deleteMessage)
+    s.on('unDeleteMessage',         MessageHandler.unDeleteMessage)
+    s.on('togglePotentialToServer', MessageHandler.togglePotentialToServer)
 
     s.on('disconnect',            () => onSocketDisconnect(s))
 })
