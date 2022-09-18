@@ -62,13 +62,13 @@ const TABELLARIUS_STATE = {
 }
 
 let live = true;
-const LOCATION = "build"
+const FRONTEND_FOLDER = "build"
 
 app.use(express.json())
-app.use('/', express.static(path.join(__dirname, LOCATION)))
+app.use('/', express.static(path.join(__dirname, FRONTEND_FOLDER)))
 
 function serveIndex (_, res) {
-    res.sendFile(path.join(__dirname, LOCATION, 'index.html'))
+    res.sendFile(path.join(__dirname, FRONTEND_FOLDER, 'index.html'))
 }
 
 for (const route of ['/', '/login', '/table', '/banner', '/popup', '/outro']) {
