@@ -190,7 +190,7 @@ const MessageHandler = {
         }
 
         if (message.response) {
-            delete options.show // This seems to glitch it out...
+            delete message.show // This seems to glitch it out...
         }
 
         return message
@@ -206,6 +206,7 @@ const MessageHandler = {
         if (messageToRespondTo) {
             messageToRespondTo.responseMessage = response
             messageToRespondTo.responded = true
+            // todo: use _createBroadcastMessageObject
             io.emit('broadcastMessage', {
                 alertMessage: messageToRespondTo.responseMessage,
                 response: true,
@@ -292,6 +293,7 @@ const MessageHandler = {
         if (messageToToggle) {
             messageToToggle.show = true
             // Emit broadcastMessage
+            // todo: use _createBroadcastMessageObject
             io.emit('broadcastMessage', {
                 alertMessage: messageToToggle.alertMessage,
                 response: false,
@@ -332,13 +334,12 @@ const MessageHandler = {
 
     demoAlertToServer: function () {
         io.emit('broadcastMessage', {
-            //alertMessage: 'i hate him sm thank u',
-            alertMessage: 'SHORTLINUS',
+            alertMessage: 'i hate him sm thank u',
             isResponse: false,
             show: true,
             item: {
                 quantity: 1,
-                title: 'bitch'
+                title: 'Demo item'
             },
             name: 'Reed',
             image: 'https://plusreed.com/assets/parap.jpg',
@@ -352,9 +353,11 @@ const MessageHandler = {
             alertMessage: 'Exactly, and I told her, I said ma\'am',
             response: true,
             // show: true,
+
+            // in this case since response = true, these don't matter.
             item: {
                 quantity: 69,
-                title: 'LTT Fleshlight'
+                title: 'Demo Item'
             },
             name: 'Reed',
             image: 'https://cdn.shopify.com/s/files/1/0522/2980/0129/files/simon.png?v=1641616954',
@@ -367,7 +370,7 @@ const MessageHandler = {
     },
 
     switchOutro: function () {
-        // unimplemented
+        // unimplemented. according to the frontend code this hooks into OBS somehow.
         MessageHandler._postHandler()
     },
 
