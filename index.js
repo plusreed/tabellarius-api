@@ -376,6 +376,21 @@ const MessageHandler = {
 
     updateDiscountShow: function () {
         TABELLARIUS_STATE.showDiscount = !TABELLARIUS_STATE.showDiscount
+        if (TABELLARIUS_STATE.showDiscount) {
+            // show discount
+            io.emit('broadcastMessage', {
+                alertMessage: TABELLARIUS_STATE.discountText,
+                isResponse: false,
+                show: true,
+                item: {},
+                name: 'LTTStore.com',
+                image: '#',
+                number: 0,
+                alertColour: 'orange',
+                timing: 0,
+                discount: true
+            })
+        }
         MessageHandler._postHandler()
     },
 
