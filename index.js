@@ -51,7 +51,8 @@ const TABELLARIUS_STATE = {
             timing: 0,
             responded: false,
             responseMessage: '',
-            potential: false
+            potential: true,
+            potentialRejected: false
         }
     ],
 
@@ -166,6 +167,8 @@ const MessageHandler = {
             nextMessageTiming: 0, // ???
             displayDiscount: TABELLARIUS_STATE.showDiscount,
             discountText: TABELLARIUS_STATE.discountText,
+            messagesPotentiated: TABELLARIUS_STATE.merch_messages.filter(m => m.potential).length,
+            messagesRejected: TABELLARIUS_STATE.merch_messages.filter(m => m.potentialRejected).length
         })
     },
 
@@ -426,7 +429,13 @@ const MessageHandler = {
     togglePotentialToServer: function (id) {
         const messageToPotentialize = TABELLARIUS_STATE.merch_messages.find(m => m.id === id)
         if (messageToPotentialize) {
+            let lastState = messageToPotentialize.potential
             messageToPotentialize.potential = !messageToPotentialize.potential
+
+            if (lastState) {
+                // Mark as rejected
+                messageToPotentialize.potentialRejected = true
+            }
         }
         MessageHandler._postHandler()
     }
@@ -464,6 +473,15 @@ io.on('connection', s => {
     // Check if authentication is successful.
     // If it is, call onSuccessfulAuthentication.
     ensureAuthenticated(s) && onSuccessfulAuthentication(s)
+
+    s.onAny((event, ...args) => {
+        wsl('Got event:', event, 'with args:', args)
+        if (MessageHandler.hasOwnProperty(event)) {
+            wsl('Calling handler for event:', event)
+        } else {
+            wsl('There is no handler for this event:', event)
+        }
+    })
 
     s.on('respondToMessage',        MessageHandler.respondToMessage)
     s.on('updateMarqueeShow',       MessageHandler.updateMarqueeShow)
