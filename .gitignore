@@ -1,3 +1,4 @@
 build_basedonsourcemaps/
 build*/
 node_modules/
+config/config.json
