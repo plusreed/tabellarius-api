@@ -54,7 +54,7 @@ const TABELLARIUS_STATE = {
             timing: 180,
             responded: false,
             responseMessage: '',
-            potential: true,
+            potential: false,
             potentialRejected: false
         }
     ],
@@ -164,7 +164,7 @@ const MessageHandler = {
     _emitTimingUpdate: function (_io) {
         TABELLARIUS_STATE.merch_messages.forEach((m) => {
             if (m.timing > 0) {
-                m.timing--
+                m.timing -= 1
             }
         })
         _io.emit('updateTimings', {
