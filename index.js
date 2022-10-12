@@ -4,6 +4,7 @@ const { Server } = require('socket.io')
 const path = require('path')
 const readline = require('readline')
 
+const addSeconds = require('./util/addSeconds')
 const config = require('./config/config.json')
 
 const addSeconds = require('./util/addSeconds')
