@@ -4,14 +4,16 @@ const { Server } = require('socket.io')
 const path = require('path')
 const readline = require('readline')
 
+const config = require('./config/config.json')
+
 const addSeconds = require('./util/addSeconds')
 
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
 
-const PASSWORD = 'lttstore.com'
-const PORT = 3000
+const PASSWORD = config.password
+const PORT = config.port
 
 /** All clients connected to socket.io */
 let clients = []
@@ -65,7 +67,7 @@ const TABELLARIUS_STATE = {
 }
 
 let live = true;
-const FRONTEND_FOLDER = "build"
+const FRONTEND_FOLDER = config.frontend_folder
 
 app.use(express.json())
 app.use('/', express.static(path.join(__dirname, FRONTEND_FOLDER)))
