@@ -4,6 +4,8 @@ const { Server } = require('socket.io')
 const path = require('path')
 const readline = require('readline')
 
+const addSeconds = require('./util/addSeconds')
+
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
@@ -48,7 +50,7 @@ const TABELLARIUS_STATE = {
             ascend: false,
             deleted: false,
             show: false,
-            timing: 0,
+            timing: 180,
             responded: false,
             responseMessage: '',
             potential: true,
@@ -98,6 +100,9 @@ app.get('/twitch', async (_req, res) => {
 })
 
 app.post('/merch-message', (req, res) => {
+    let currentDate = new Date()
+    let respondByDate = addSeconds(new Date(), 180) // adds 180 seconds to current date
+
     const m = {
         number: TABELLARIUS_STATE.merch_messages.length + 1,
         id: +new Date(),
@@ -113,7 +118,7 @@ app.post('/merch-message', (req, res) => {
         ascend: false,
         deleted: false,
         show: false,
-        timing: 0,
+        timing: Math.abs(currentDate.getTime() - respondByDate.getTime()) / 1000,
         responded: false,
         responseMessage: '',
         discount: false
@@ -156,6 +161,7 @@ function wsl (...args) {
 
 const MessageHandler = {
     _emitTimingUpdate: function (_io) {
+        // TODO: Go through merch messages and decrement every timing by 1
         _io.emit('updateTimings', {
             backlog: TABELLARIUS_STATE.merch_messages,
             queueLength: TABELLARIUS_STATE.merch_messages.length,
@@ -306,7 +312,7 @@ const MessageHandler = {
                 image: messageToToggle.image,
                 number: messageToToggle.number,
                 alertColour: messageToToggle.alertColour,
-                timing: messageToToggle.timing,
+                timing: 0,
                 discount: messageToToggle.discount,
                 deleted: messageToToggle.deleted,
             })
