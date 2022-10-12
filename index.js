@@ -7,8 +7,6 @@ const readline = require('readline')
 const addSeconds = require('./util/addSeconds')
 const config = require('./config/config.json')
 
-const addSeconds = require('./util/addSeconds')
-
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
@@ -164,7 +162,11 @@ function wsl (...args) {
 
 const MessageHandler = {
     _emitTimingUpdate: function (_io) {
-        // TODO: Go through merch messages and decrement every timing by 1
+        TABELLARIUS_STATE.merch_messages.forEach((m) => {
+            if (m.timing > 0) {
+                m.timing--
+            }
+        })
         _io.emit('updateTimings', {
             backlog: TABELLARIUS_STATE.merch_messages,
             queueLength: TABELLARIUS_STATE.merch_messages.length,
