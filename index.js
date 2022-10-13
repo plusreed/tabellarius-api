@@ -167,6 +167,11 @@ const MessageHandler = {
                 m.timing -= 1
             }
         })
+
+        // sum up all timings
+        let totalTiming = 0
+        TABELLARIUS_STATE.merch_messages.forEach(m => totalTiming += m.timing)
+
         _io.emit('updateTimings', {
             backlog: TABELLARIUS_STATE.merch_messages,
             queueLength: TABELLARIUS_STATE.merch_messages.length,
@@ -174,8 +179,8 @@ const MessageHandler = {
             isPaused: TABELLARIUS_STATE.queuePaused,
             displayMarquee: TABELLARIUS_STATE.marquee_show,
             marqueeText: TABELLARIUS_STATE.marquee_text,
-            queueDuration: 0, // ???
-            nextMessageTiming: 0, // ???
+            queueDuration: totalTiming,
+            nextMessageTiming: TABELLARIUS_STATE.merch_messages[TABELLARIUS_STATE.merch_messages.length - 1].timing,
             displayDiscount: TABELLARIUS_STATE.showDiscount,
             discountText: TABELLARIUS_STATE.discountText,
             messagesPotentiated: TABELLARIUS_STATE.merch_messages.filter(m => m.potential).length,
@@ -317,7 +322,7 @@ const MessageHandler = {
                 image: messageToToggle.image,
                 number: messageToToggle.number,
                 alertColour: messageToToggle.alertColour,
-                timing: 0,
+                timing: messageToToggle.timing,
                 discount: messageToToggle.discount,
                 deleted: messageToToggle.deleted,
             })
