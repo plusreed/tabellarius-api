@@ -4,6 +4,7 @@ const { Server } = require('socket.io')
 const path = require('path')
 const readline = require('readline')
 
+const addSeconds = require('./util/addSeconds')
 const config = require('./config/config.json')
 
 const app = express()
@@ -50,10 +51,10 @@ const TABELLARIUS_STATE = {
             ascend: false,
             deleted: false,
             show: false,
-            timing: 0,
+            timing: 180,
             responded: false,
             responseMessage: '',
-            potential: true,
+            potential: false,
             potentialRejected: false
         }
     ],
@@ -100,6 +101,9 @@ app.get('/twitch', async (_req, res) => {
 })
 
 app.post('/merch-message', (req, res) => {
+    let currentDate = new Date()
+    let respondByDate = addSeconds(new Date(), 180) // adds 180 seconds to current date
+
     const m = {
         number: TABELLARIUS_STATE.merch_messages.length + 1,
         id: +new Date(),
@@ -115,7 +119,7 @@ app.post('/merch-message', (req, res) => {
         ascend: false,
         deleted: false,
         show: false,
-        timing: 0,
+        timing: Math.abs(currentDate.getTime() - respondByDate.getTime()) / 1000,
         responded: false,
         responseMessage: '',
         discount: false
@@ -158,6 +162,16 @@ function wsl (...args) {
 
 const MessageHandler = {
     _emitTimingUpdate: function (_io) {
+        TABELLARIUS_STATE.merch_messages.forEach((m) => {
+            if (m.timing > 0) {
+                m.timing -= 1
+            }
+        })
+
+        // sum up all timings
+        let totalTiming = 0
+        TABELLARIUS_STATE.merch_messages.forEach(m => totalTiming += m.timing)
+
         _io.emit('updateTimings', {
             backlog: TABELLARIUS_STATE.merch_messages,
             queueLength: TABELLARIUS_STATE.merch_messages.length,
@@ -165,8 +179,8 @@ const MessageHandler = {
             isPaused: TABELLARIUS_STATE.queuePaused,
             displayMarquee: TABELLARIUS_STATE.marquee_show,
             marqueeText: TABELLARIUS_STATE.marquee_text,
-            queueDuration: 0, // ???
-            nextMessageTiming: 0, // ???
+            queueDuration: totalTiming,
+            nextMessageTiming: TABELLARIUS_STATE.merch_messages[TABELLARIUS_STATE.merch_messages.length - 1].timing,
             displayDiscount: TABELLARIUS_STATE.showDiscount,
             discountText: TABELLARIUS_STATE.discountText,
             messagesPotentiated: TABELLARIUS_STATE.merch_messages.filter(m => m.potential).length,
